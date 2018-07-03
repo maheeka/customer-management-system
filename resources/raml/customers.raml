@@ -1,0 +1,91 @@
+#%RAML 1.0
+title: New API
+baseUri: https://mocksvc.mulesoft.com/mocks/a53602b5-8abb-487a-a834-8c493fd949d3 # baseUri: 'https://mocksvc.mulesoft.com/mocks/a53602b5-8abb-487a-a834-8c493fd949d3'
+types:
+  Customer:
+    description: Customer data type
+    type: object
+    properties:
+      firstName:
+        required: true
+        maxLength: 100
+        example: Sam
+        description: first name of the customer
+        type: string
+      lastName:
+        required: true
+        maxLength: 100
+        example: Smith
+        description: last name of the customer
+        type: string
+      address:
+        required: true
+        description: Address of the customer
+        type: object
+        properties:
+          home:
+            required: true
+            maxLength: 500
+            example: '65, Princes Highway, St Leonards, NSW 2060'
+            description: Home address
+            type: string
+          work:
+            required: true
+            maxLength: 500
+            example: '65, Princes Highway, St Leonards, NSW 2060'
+            description: Work address
+            type: string
+      id:
+        required: true
+        example: '123'
+        description: Unique id to identify customer
+        type: string
+/customers:
+    post:
+        responses:
+            '201':
+                description: 'Responds with the customer unique ID'
+                body:
+                    application/json:
+                        example:
+                            id: '2'
+                            type: object
+        body:
+            application/json:
+                description: Create a customer
+                example:
+                    firstname: John
+                    lastname: Lenon
+                    addresses:
+                        home: '100, Warwick Street, Hurstville, NSW 2220'
+                        work: '65, Princes Highway, St Leonards, NSW 2060'
+                    type: object
+    get:
+        responses:
+            '200':
+                description: Get  all customers
+                body:
+                    application/json:
+                        type: array
+                        items:
+                            required: false
+                            type: Customer
+    /{id}:
+        patch:
+            responses:
+                '200':
+                    description: Update a customer with a given customer id
+                    body:
+                        application/json:
+                            example:
+                                lastName: Jackson
+                            type: object
+        delete:
+            responses:
+                '200': {}
+    uriParameters:
+        id:
+            example: '123'
+            description: Property description
+            type: string
+            required: false
