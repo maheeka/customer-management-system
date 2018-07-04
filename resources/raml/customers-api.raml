@@ -5,9 +5,23 @@ protocols: [ HTTPS ]
 mediaType: application/json
 baseUri: 'https://mocksvc.mulesoft.com/mocks/a53602b5-8abb-487a-a834-8c493fd949d3'
 description: API for managing customer records
+securitySchemes: 
+    basicAuth:
+        description: Authorize all requests to the API
+        type: Basic Authentication
+        describedBy:
+            headers:
+                Authorization:
+                    description: Include the basic auth token in "Basic base64Encode( <username:password>) format
+                    type: string
+            responses:
+                401:
+                    description: User is unauthorized to make the request to the resource. Authentication details are not provided or invalid.
+                403:
+                    description: User does not have permission to request the resource
 types:
-  Customer: !include exchange_modules/96274edc-31a8-42db-9a28-2b36c91a7479/customerdatatypes/1.0.1/customer.raml    
-  Error: !include exchange_modules/96274edc-31a8-42db-9a28-2b36c91a7479/customerdatatypes/1.0.1/error.raml
+    Customer: !include exchange_modules/96274edc-31a8-42db-9a28-2b36c91a7479/customerdatatypes/1.0.1/customer.raml    
+    Error: !include exchange_modules/96274edc-31a8-42db-9a28-2b36c91a7479/customerdatatypes/1.0.1/error.raml
 /customers:
     get:
         description: Get all customers
