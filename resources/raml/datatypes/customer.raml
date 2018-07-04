@@ -1,0 +1,38 @@
+#%RAML 1.0 DataType
+description: Customer data type
+type: object
+properties:
+  firstName:
+    required: true
+    maxLength: 100
+    example: Sam
+    description: first name of the customer
+    type: string
+  lastName:
+    required: true
+    maxLength: 100
+    example: Smith
+    description: last name of the customer
+    type: string
+  address:
+    required: true
+    description: Address of the customer
+    type: object
+    properties:
+      home:
+        required: true
+        maxLength: 500
+        example: '65, Princes Highway, St Leonards, NSW 2060'
+        description: Home address
+        type: string
+      work:
+        required: true
+        maxLength: 500
+        example: '65, Princes Highway, St Leonards, NSW 2060'
+        description: Work address
+        type: string
+  id:
+    required: true
+    example: '123'
+    description: Unique id to identify customer
+    type: string

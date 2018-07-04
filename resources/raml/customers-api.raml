@@ -1,0 +1,148 @@
+#%RAML 1.0
+title: Customer API
+version: v1
+protocols: [ HTTPS ] 
+mediaType: application/json
+baseUri: 'https://mocksvc.mulesoft.com/mocks/a53602b5-8abb-487a-a834-8c493fd949d3'
+description: API for managing customer records
+types:
+  Customer: !include exchange_modules/96274edc-31a8-42db-9a28-2b36c91a7479/customerdatatypes/1.0.1/customer.raml    
+  Error: !include exchange_modules/96274edc-31a8-42db-9a28-2b36c91a7479/customerdatatypes/1.0.1/error.raml
+/customers:
+    get:
+        description: Get all customers
+        responses:
+            200:
+                description: Get all customers
+                body:
+                    application/json:
+                        type: array
+                        items:
+                            required: false
+                            type: Customer
+            500:
+                description: Error while getting customers
+                body:
+                    application/json:
+                        type: Error
+                        example:
+                            { 
+                                "errorCode" : "50001",
+                                "message" : "Cannot access customer records",
+                                "errorDetail" : "Error connecting to database"
+                            }
+    post:
+        description: Create customer by providing mandatory fields in request body and get customer ID upon successful creation
+        responses:
+            201:
+                description: Successfully created customer
+                body:
+                    application/json:
+                        type: object
+                        example:
+                            { 
+                                "id": "2"
+                            }
+            400:
+                description: Error while validating request for creating customer
+                body:
+                    application/json:
+                        type: Error
+                        example:
+                            { 
+                                "errorCode": "40001",
+                                "message" : "First name must be provided to create customer"
+                            }
+            500:
+                description: Error while creating customer
+                body:
+                    application/json:
+                        type: Error
+                        example:
+                            { 
+                                "errorCode" : "50001",
+                                "message" : "Customer cannot be created",
+                                "errorDetail" : "Error connecting to database"
+                            }
+        body:
+            application/json:
+                type: object
+                example:
+                    { 
+                        "firstname": "John",
+                        "lastname": "Lenon",
+                        "addresses": 
+                            {
+                                "home": "100, Warwick Street, Hurstville, NSW 2220",
+                                "work": "65, Princes Highway, St Leonards, NSW 2060"
+                            }
+                    }
+    /{id}:
+        uriParameters:
+            id:
+                example: '123'
+                description: Unique ID of customer
+                type: string
+                required: true
+        patch:
+            description: Update details of customer with ID
+            responses:
+                204:
+                    description: Update customer record successful
+                400:
+                    description: Error while updating customer
+                    body:
+                        application/json:
+                            type: Error
+                            example:
+                                {
+                                    "errorCode": "40002", 
+                                    "message" : "Age is not a valid field to update"
+                                }
+                404:
+                    description: Customer record not found
+                    body:
+                        application/json:
+                            type: Error
+                            example: 
+                                { 
+                                    "errorCode": "40401",
+                                    "message" : "Customer record does not exist"
+                                }
+                500:
+                    description: Error while updating customer
+                    body:
+                        application/json:
+                            type: Error
+                            example:
+                                { 
+                                    "errorCode" : "50001",
+                                    "message" : "Customer cannot be updated",
+                                    "errorDetail" : "Error connecting to database"
+                                }
+        delete:
+            description: Delete customer with ID
+            responses:
+                204: 
+                    description: Delete customer record successful
+                404:
+                    description: Customer record not found
+                    body:
+                        application/json:
+                            type: Error
+                            example:
+                                { 
+                                    "errorCode": "40401",
+                                    "message" : "Customer record does not exist"
+                                }
+                500:
+                    description: Error while deleting customer
+                    body:
+                        application/json:
+                            type: Error
+                            example:
+                                { 
+                                  "errorCode" : "50001",
+                                  "message" : "Customer cannot be deleted",
+                                  "errorDetail" : "Error connecting to database"
+                                }
