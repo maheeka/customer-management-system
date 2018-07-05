@@ -3,7 +3,7 @@ title: Customer API
 version: v1
 protocols: [ HTTPS ] 
 mediaType: application/json
-baseUri: 'https://mocksvc.mulesoft.com/mocks/a53602b5-8abb-487a-a834-8c493fd949d3'
+baseUri: https://mocksvc.mulesoft.com/mocks/99846591-3b02-418d-9374-7ca01dd7e4c1 # baseUri: 'https://mocksvc.mulesoft.com/mocks/a53602b5-8abb-487a-a834-8c493fd949d3'
 description: API for managing customer records
 securitySchemes: 
     basicAuth:
@@ -20,10 +20,34 @@ securitySchemes:
                 403:
                     description: User does not have permission to request the resource
 types:
-    Customer: !include exchange_modules/96274edc-31a8-42db-9a28-2b36c91a7479/customerdatatypes/1.0.1/customer.raml    
-    Error: !include exchange_modules/96274edc-31a8-42db-9a28-2b36c91a7479/customerdatatypes/1.0.1/error.raml
+    Customer: !include exchange_modules/96274edc-31a8-42db-9a28-2b36c91a7479/customerdatatypes/1.0.2/customer.raml
+    Error: !include exchange_modules/96274edc-31a8-42db-9a28-2b36c91a7479/customerdatatypes/1.0.2/error.raml
+
+/orders:
+
+/products:
+
 /customers:
     get:
+        queryParameters:
+            updatedLaterThan:
+                displayName: last updated after
+                type: datetime
+                description: Records updated or deleted after given date and time
+                example: 2018-07-04T01:55:42.283Z
+                required: false
+            offset:
+                displayName: offset to get
+                type: integer
+                description: offset to start getting records from
+                example: 10
+                required: false
+            limit:
+                displayName: limit of records
+                type: integer
+                description: number of records to send
+                example: 20
+                required: false
         description: Get all customers
         responses:
             200:
@@ -83,8 +107,8 @@ types:
                 type: object
                 example:
                     { 
-                        "firstname": "John",
-                        "lastname": "Lenon",
+                        "firstName": "John",
+                        "lastName": "Lenon",
                         "addresses": 
                             {
                                 "home": "100, Warwick Street, Hurstville, NSW 2220",
@@ -134,6 +158,16 @@ types:
                                     "message" : "Customer cannot be updated",
                                     "errorDetail" : "Error connecting to database"
                                 }
+            body:
+                application/json:
+                    type: object
+                    example:
+                        { 
+                            "addresses": 
+                                {
+                                    "home": "100, Warwick Street, Hurstville, NSW 2220",
+                                }
+                        }
         delete:
             description: Delete customer with ID
             responses:
@@ -159,4 +193,33 @@ types:
                                   "errorCode" : "50001",
                                   "message" : "Customer cannot be deleted",
                                   "errorDetail" : "Error connecting to database"
+                                }
+        get:
+            description: Get customer by id
+            responses:
+                200:
+                    description: Get customer by id
+                    body:
+                        application/json:
+                            type: Customer
+                404:
+                    description: Customer record not found
+                    body:
+                        application/json:
+                            type: Error
+                            example:
+                                { 
+                                    "errorCode": "40401",
+                                    "message" : "Customer record does not exist"
+                                }
+                500:
+                    description: Error while getting customer
+                    body:
+                        application/json:
+                            type: Error
+                            example:
+                                { 
+                                    "errorCode" : "50001",
+                                    "message" : "Cannot access customer record",
+                                    "errorDetail" : "Error connecting to database"
                                 }

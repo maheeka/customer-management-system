@@ -1,38 +1,61 @@
 #%RAML 1.0 DataType
+#%RAML 1.0 DataType
 description: Customer data type
 type: object
 properties:
   firstName:
+    type: string
     required: true
     maxLength: 100
     example: Sam
     description: first name of the customer
-    type: string
   lastName:
+    type: string
     required: true
     maxLength: 100
     example: Smith
     description: last name of the customer
-    type: string
-  address:
+  addresses:
+    type: object
     required: true
     description: Address of the customer
-    type: object
     properties:
       home:
+        type: string
         required: true
         maxLength: 500
         example: '65, Princes Highway, St Leonards, NSW 2060'
         description: Home address
-        type: string
       work:
+        type: string
         required: true
         maxLength: 500
         example: '65, Princes Highway, St Leonards, NSW 2060'
         description: Work address
-        type: string
   id:
+    type: string
     required: true
     example: '123'
     description: Unique id to identify customer
-    type: string
+  deleted:
+    type: boolean
+    required: true
+    example: false
+    description: Is the record deleted
+  lastUpdated:
+    type: datetime
+    required: true
+    example: 2018-07-04T01:55:42.283Z
+    description: Last updated timestamp
+example:
+  {
+    "id": "1",
+    "firstName": "John",
+    "lastName": "Lenon",
+    "addresses": {
+      "home": "100, Warwick Street, Hurstville, NSW 2220",
+      "work": "65, Princes Highway, St Leonards, NSW 2060"
+    },
+    "lastUpdated": "2018-07-04T01:55:42.283Z",
+    "deleted":false
+  }
