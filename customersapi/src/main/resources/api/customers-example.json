@@ -1,0 +1,19 @@
+[{
+	"customerid": "1",
+	"firstname": "John",
+	"lastname": "Lenon",
+	"addresses": {
+		"home": "100, Warwick Street, Hurstville, NSW 2220",
+		"work": "65, Princes Highway, St Leonards, NSW 2060"
+		}
+	},
+	{
+	"customerid": "2",
+	"firstname": "Anne",
+	"lastname": "Philips",
+	"addresses": {
+		"home": "10, King Street, Wollstonecraft, NSW 2065",
+		"work": "23, Alfred Street, Chatswood, NSW 2060"
+		}
+	}
+	]

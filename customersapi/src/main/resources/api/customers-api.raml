@@ -1,0 +1,359 @@
+#%RAML 1.0
+title: Customer API
+version: v1
+protocols: [ HTTPS ] 
+mediaType: application/json
+baseUri: https://mocksvc.mulesoft.com/mocks/99846591-3b02-418d-9374-7ca01dd7e4c1 # baseUri: 'https://mocksvc.mulesoft.com/mocks/a53602b5-8abb-487a-a834-8c493fd949d3'
+description: API for managing customer records
+securitySchemes: 
+    basicAuth:
+        description: Authorize all requests to the API
+        type: Basic Authentication
+        describedBy:
+            headers:
+                Authorization:
+                    description: Include the basic auth token in "Basic base64Encode( <username:password>) format
+                    type: string
+            responses:
+                401:
+                    description: User is unauthorized to make the request to the resource. Authentication details are not provided or invalid.
+                403:
+                    description: User does not have permission to request the resource
+types:
+    Customer: !include exchange_modules/96274edc-31a8-42db-9a28-2b36c91a7479/customerdatatypes/1.0.2/customer.raml
+    Error: !include exchange_modules/96274edc-31a8-42db-9a28-2b36c91a7479/customerdatatypes/1.0.2/error.raml
+
+/orders:
+
+/products:
+
+/customers:
+    get:
+        description: Get all customers
+        queryParameters:
+            updatedLaterThan:
+                displayName: last updated after
+                type: datetime
+                description: Records updated or deleted after given date and time
+                example: 2018-07-04T01:55:42.283Z
+                required: false
+            offset:
+                displayName: offset to get
+                type: integer
+                description: offset to start getting records from
+                example: 10
+                required: false
+            limit:
+                displayName: limit of records
+                type: integer
+                description: number of records to send
+                example: 20
+                required: false
+        headers:
+            Accept: 
+                description: Accept content type
+                type: string
+                required: false
+                example: application/json
+            Authorization : 
+                description: Authorization header
+                type: string
+                required: true
+                example: Basic 1239123nsdajksdnjasndasdnkasd
+        responses:
+            200:
+                description: Get all customers
+                body:
+                    application/json:
+                        type: array
+                        items:
+                            required: false
+                            type: Customer
+                headers:
+                    Content-Type:
+                        description: content type of the response
+                        type: string
+                        required: true
+                        example: application/json
+            500:
+                description: Error while getting customers
+                body:
+                    application/json:
+                        type: Error
+                        example:
+                            { 
+                                "errorCode" : "50001",
+                                "message" : "Cannot access customer records",
+                                "errorDetail" : "Error connecting to database"
+                            }
+                headers:
+                    Content-Type:
+                        description: content type of the response
+                        type: string
+                        required: true
+                        example: application/json
+    post:
+        description: Create customer by providing mandatory fields in request body and get customer ID upon successful creation
+        body:
+            application/json:
+                type: object
+                example:
+                    { 
+                        "firstName": "John",
+                        "lastName": "Lenon",
+                        "addresses": 
+                            {
+                                "home": "100, Warwick Street, Hurstville, NSW 2220",
+                                "work": "65, Princes Highway, St Leonards, NSW 2060"
+                            }
+                    }
+        headers:
+            Accept: 
+                description: Accept content type
+                type: string
+                required: false
+                example: application/json
+            Authorization : 
+                description: Authorization header
+                type: string
+                required: true
+                example: Basic 1239123nsdajksdnjasndasdnkasd
+            Content-Type:
+                description: content type of the response
+                type: string
+                required: true
+                example: application/json
+        responses:
+            201:
+                description: Successfully created customer
+                body:
+                    application/json:
+                        type: object
+                        example:
+                            { 
+                                "id": "2"
+                            }
+                headers:
+                    Content-Type:
+                        description: content type of the response
+                        type: string
+                        required: true
+                        example: application/json
+            400:
+                description: Error while validating request for creating customer
+                body:
+                    application/json:
+                        type: Error
+                        example:
+                            { 
+                                "errorCode": "40001",
+                                "message" : "First name must be provided to create customer"
+                            }
+                headers:
+                    Content-Type:
+                        description: content type of the response
+                        type: string
+                        required: true
+                        example: application/json
+            500:
+                description: Error while creating customer
+                body:
+                    application/json:
+                        type: Error
+                        example:
+                            { 
+                                "errorCode" : "50001",
+                                "message" : "Customer cannot be created",
+                                "errorDetail" : "Error connecting to database"
+                            }
+                headers:
+                    Content-Type:
+                        description: content type of the response
+                        type: string
+                        required: true
+                        example: application/json
+    /{id}:
+        uriParameters:
+            id:
+                example: '123'
+                description: Unique ID of customer
+                type: string
+                required: true
+        
+        patch:
+            description: Update details of customer with ID
+            body:
+                application/json:
+                    type: object
+                    example:
+                        { 
+                            "addresses": 
+                                {
+                                    "home": "100, Warwick Street, Hurstville, NSW 2220",
+                                }
+                        }
+            headers:
+                Authorization : 
+                    description: Authorization header
+                    type: string
+                    required: true
+                    example: Basic 1239123nsdajksdnjasndasdnkasd
+                Content-Type:
+                    description: content type of the response
+                    type: string
+                    required: true
+                    example: application/json
+            responses:
+                204:
+                    description: Update customer record successful
+                400:
+                    description: Error while updating customer
+                    body:
+                        application/json:
+                            type: Error
+                            example:
+                                {
+                                    "errorCode": "40002", 
+                                    "message" : "Age is not a valid field to update"
+                                }
+                    headers:
+                        Content-Type:
+                            description: content type of the response
+                            type: string
+                            required: true
+                            example: application/json
+                404:
+                    description: Customer record not found
+                    body:
+                        application/json:
+                            type: Error
+                            example: 
+                                { 
+                                    "errorCode": "40401",
+                                    "message" : "Customer record does not exist"
+                                }
+                    headers:
+                        Content-Type:
+                            description: content type of the response
+                            type: string
+                            required: true
+                            example: application/json
+                500:
+                    description: Error while updating customer
+                    body:
+                        application/json:
+                            type: Error
+                            example:
+                                { 
+                                    "errorCode" : "50001",
+                                    "message" : "Customer cannot be updated",
+                                    "errorDetail" : "Error connecting to database"
+                                }
+                    headers:
+                        Content-Type:
+                            description: content type of the response
+                            type: string
+                            required: true
+                            example: application/json
+        delete:
+            description: Delete customer with ID
+            headers:
+                Authorization : 
+                    description: Authorization header
+                    type: string
+                    required: true
+                    example: Basic 1239123nsdajksdnjasndasdnkasd
+            responses:
+                204: 
+                    description: Delete customer record successful
+                404:
+                    description: Customer record not found
+                    body:
+                        application/json:
+                            type: Error
+                            example:
+                                { 
+                                    "errorCode": "40401",
+                                    "message" : "Customer record does not exist"
+                                }
+                    headers:
+                        Content-Type:
+                            description: content type of the response
+                            type: string
+                            required: true
+                            example: application/json
+                500:
+                    description: Error while deleting customer
+                    body:
+                        application/json:
+                            type: Error
+                            example:
+                                { 
+                                  "errorCode" : "50001",
+                                  "message" : "Customer cannot be deleted",
+                                  "errorDetail" : "Error connecting to database"
+                                }
+                    headers:
+                        Content-Type:
+                            description: content type of the response
+                            type: string
+                            required: true
+                            example: application/json
+        get:
+            description: Get customer by id
+            headers:
+                Accept: 
+                    description: Accept content type
+                    type: string
+                    required: false
+                    example: application/json
+                Authorization : 
+                    description: Authorization header
+                    type: string
+                    required: true
+                    example: Basic 1239123nsdajksdnjasndasdnkasd
+            responses:
+                200:
+                    description: Get customer by id
+                    body:
+                        application/json:
+                            type: Customer
+                    headers:
+                        Content-Type:
+                            description: content type of the response
+                            type: string
+                            required: true
+                            example: application/json
+                404:
+                    description: Customer record not found
+                    body:
+                        application/json:
+                            type: Error
+                            example:
+                                { 
+                                    "errorCode": "40401",
+                                    "message" : "Customer record does not exist"
+                                }
+                    headers:
+                        Content-Type:
+                            description: content type of the response
+                            type: string
+                            required: true
+                            example: application/json
+                500:
+                    description: Error while getting customer
+                    body:
+                        application/json:
+                            type: Error
+                            example:
+                                { 
+                                    "errorCode" : "50001",
+                                    "message" : "Cannot access customer record",
+                                    "errorDetail" : "Error connecting to database"
+                                }
+                    headers:
+                        Content-Type:
+                            description: content type of the response
+                            type: string
+                            required: true
+                            example: application/json

@@ -1,0 +1,27 @@
+{
+  "configs": [
+    "customers-api.xml"
+  ],
+  "secureProperties": [],
+  "redeploymentEnabled": true,
+  "name": "customersapi",
+  "minMuleVersion": "4.1.2",
+  "requiredProduct": "MULE_EE",
+  "classLoaderModelLoaderDescriptor": {
+    "id": "mule",
+    "attributes": {
+      "exportedPackages": [],
+      "exportedResources": [
+        "api\\.designer.json",
+        "api\\.gitignore",
+        "api\\customers-api.raml",
+        "api\\exchange_modules\\96274edc-31a8-42db-9a28-2b36c91a7479\\customerdatatypes\\1.0.2\\customer.raml",
+        "api\\exchange_modules\\96274edc-31a8-42db-9a28-2b36c91a7479\\customerdatatypes\\1.0.2\\error.raml"
+      ]
+    }
+  },
+  "bundleDescriptorLoader": {
+    "id": "mule",
+    "attributes": {}
+  }
+}
