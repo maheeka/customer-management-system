@@ -167,7 +167,7 @@ output application/json
         </ee:transform>
     </flow>
     <flow name="get:\customers:customers-api-config">
-        <http:listener doc:name="Listener" doc:id="7224a164-0e98-4ca3-8d3c-b25fb6158007" config-ref="customers-api-httpListenerConfig" path="/get"/>
+        <http:listener doc:name="Listener" doc:id="7224a164-0e98-4ca3-8d3c-b25fb6158007" config-ref="customers-api-httpListenerConfig" path="/"/>
 		<logger level="INFO" message="Invoking get customers" />
 		<db:select doc:name="Get Customers DB" doc:id="fd3be38f-22e9-444b-ac69-94f7bed80e20" config-ref="CustomerDB">
 			<db:sql >select * from customer</db:sql>
@@ -193,7 +193,7 @@ payload map ( payload01 , indexOfPayload01 ) -> {
 		<logger level="INFO" doc:name="Logger" doc:id="f8fd19f7-14b5-4142-b69e-c7acaee77859" />
     </flow>
     <flow name="get:\customers\(id):customers-api-config">
-        <http:listener doc:name="Listener" doc:id="d7612dd8-f580-4dc8-b355-bcaa72b258c0" config-ref="customers-api-httpListenerConfig" path="/customers/{id}" allowedMethods="GET">
+        <http:listener doc:name="Listener" doc:id="d7612dd8-f580-4dc8-b355-bcaa72b258c0" config-ref="customers-api-httpListenerConfig" path="/" allowedMethods="GET">
 			<http:error-response statusCode="500">
 				<http:body ><![CDATA[#[payload]]]></http:body>
 			</http:error-response>
