@@ -22,7 +22,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
         <apikit:router config-ref="customers-api-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:BAD_REQUEST">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="9dcda1a6-3219-426b-aadd-31d6c466dc63">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -30,7 +30,7 @@ output application/json
 {message: "Bad request"}]]></ee:set-payload>
                     </ee:message>
                     <ee:variables>
-                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
                     </ee:variables>
                 </ee:transform>
             </on-error-propagate>
@@ -147,12 +147,13 @@ output application/json
         </ee:transform>
     </flow>
     <flow name="patch:\customers\(id):application\json:customers-api-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:id="c8b800ac-c59d-473f-be3e-8a0d39e7d93f">
             <ee:variables>
-                <ee:set-variable variableName="id">attributes.uriParams.id</ee:set-variable>
+                <ee:set-variable variableName="id"><![CDATA[attributes.uriParams.id]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -191,15 +192,23 @@ payload map ( payload01 , indexOfPayload01 ) -> {
 		<logger level="INFO" doc:name="Logger" doc:id="f8fd19f7-14b5-4142-b69e-c7acaee77859" />
     </flow>
     <flow name="get:\customers\(id):customers-api-config">
-        <http:listener doc:name="Listener" doc:id="d7612dd8-f580-4dc8-b355-bcaa72b258c0" config-ref="customers-api-httpListenerConfig" path="/customers/{id}" allowedMethods="GET"/>
+        <http:listener doc:name="Listener" doc:id="d7612dd8-f580-4dc8-b355-bcaa72b258c0" config-ref="customers-api-httpListenerConfig" path="/customers/{id}" allowedMethods="GET">
+			<http:error-response statusCode="500">
+				<http:body ><![CDATA[#[payload]]]></http:body>
+			</http:error-response>
+		</http:listener>
 		<logger level="INFO" doc:name="Logger" doc:id="2d455b0d-1931-4a5b-8858-aeb5e4051bfd" message='Getting customer record for id #[attributes.uriParams.id]'/>
 		<db:select doc:name="Get Customer Record" doc:id="88268b72-3135-47db-ad22-1eac143f02a3" config-ref="CustomerDB">
 			<db:sql >SELECT * FROM customer WHERE id= :id</db:sql>
 			<db:input-parameters ><![CDATA[#[{'id' : attributes.uriParams.id}]]]></db:input-parameters>
 		</db:select>
-		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:id="523858b9-d69a-4e00-b962-d05070060131">
-            <ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+		<set-variable value="#[sizeOf(payload)]" doc:name="Set Variable" doc:id="e938c223-c33e-4379-956f-ef2eac881590" variableName="count"/>
+		<logger level="INFO" doc:name="Logger" doc:id="a50973b7-d239-42a4-ba28-aa34eb69fbd3" message="#[vars.count]"/>
+		<choice doc:name="hasResults?" doc:id="709ee5bc-62fa-4fe2-9544-9af4369e744b" >
+			<when expression="#[vars.count == 1]">
+				<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:id="523858b9-d69a-4e00-b962-d05070060131">
+            <ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
@@ -218,6 +227,25 @@ output application/json
                 <ee:set-variable variableName="id"><![CDATA[attributes.uriParams.id]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
+            </when>
+			<otherwise >
+				<logger level="WARN" doc:name="Logger" doc:id="0e45d634-01a2-439f-a6c2-1616b32eaea1" message="Error - no records" />
+				<set-payload value='{ 
+      "errorCode" : "40401",
+      "message" : "Customer record does not exist"
+  }' doc:name="Set Payload" doc:id="e449acbc-0666-4895-9461-ddea121d6fa8" mimeType="application/json" />
+				<set-variable value="404" doc:name="Set Variable" doc:id="3d8e25cc-06b8-4475-a96b-014aa4e9a3e2" variableName="httpStatus"/>
+            </otherwise>
+		</choice>
+		<error-handler>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="045d3c81-7968-4683-ad4e-6b9d4abc71d8" type="ANY">
+				<set-payload value='{ 
+      "errorCode" : "50001",
+      "message" : "Server error encountered"
+  }' doc:name="Set Payload" doc:id="cb734a49-7692-4722-acd0-546ee19150c9" mimeType="application/json" />
+				<set-variable value="500" doc:name="Set Variable" doc:id="3d8e25cc-06b8-4475-a96b-014aa4e9a3e2" variableName="httpStatus"/>
+			</on-error-propagate>
+		</error-handler>
     </flow>
     <flow name="post:\customers:application\json:customers-api-config">
         <http:listener doc:name="Listener" doc:id="97ec7c8d-78a8-44d8-b06c-7ac281baf5d5" config-ref="customers-api-httpListenerConfig" path="/customers"/>
