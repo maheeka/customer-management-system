@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="Customer" format="java">
+      <types:shape format="raml"><![CDATA[#%RAML 1.0 DataType
+type: object
+properties:
+    field1:
+        type: string
+    field2:
+        properties:
+            field21:
+                type: string
+            field22:
+                type: string]]></types:shape>
+    </types:type>
+    <types:type name="Error" format="java">
+      <types:shape format="raml"><![CDATA[#%RAML 1.0 DataType
+description: Error message data type
+type: object
+properties:
+  errorCode:
+    description: Error code for the error
+    required: true
+    type: string
+    example: '50001'
+  message:
+    description: Display message for the error
+    required: true
+    type: string
+    example: 'Customer cannot be created'
+  errorDetail:
+    description: Detailed error message with technical details
+    required: false
+    type: string
+    example: 'Cannot connect to database'
+
+example:
+  { 
+      "errorCode" : "50001",
+      "message" : "Cannot access customer record",
+      "errorDetail" : "Error connecting to database"
+  }]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#022cb45a-0215-41eb-be2c-3a191e3df928">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="Customer"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>
