@@ -6,8 +6,9 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
         <http:listener-connection host="0.0.0.0" port="8081"/>
     </http:listener-config>
     <apikit:config name="customers-api-config" raml="customers-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <configuration-properties file="db-config.properties" doc:name="DB configurations" doc:id="872422be-3571-4a52-a383-a2b0e16859d7" />
     <db:config name="CustomerDB" doc:name="Database Config" doc:id="40a95459-9e8d-4d31-ad3d-1885496313a5" >
-		<db:my-sql-connection host="localhost" port="3306" user="root" password="root" database="customerDB" />
+		<db:my-sql-connection host="${db.host}" port="${db.port}" user="${db.password}" password="${db.password}" database="customerDB" />
 	</db:config>
 	<flow name="customers-api-main">
         <http:listener config-ref="customers-api-httpListenerConfig" path="/api/*">
