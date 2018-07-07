@@ -191,9 +191,11 @@ payload map ( payload01 , indexOfPayload01 ) -> {
 		<logger level="INFO" doc:name="Logger" doc:id="f8fd19f7-14b5-4142-b69e-c7acaee77859" />
     </flow>
     <flow name="get:\customers\(id):customers-api-config">
-        <http:listener doc:name="Listener" doc:id="d7612dd8-f580-4dc8-b355-bcaa72b258c0" config-ref="customers-api-httpListenerConfig" path="/customers/{id}"/>
-		<db:select doc:name="Get Customer" doc:id="b29fb126-e710-4713-aa64-a70e297c3edc" config-ref="CustomerDB">
-			<db:sql >select * from customer where id='1'</db:sql>
+        <http:listener doc:name="Listener" doc:id="d7612dd8-f580-4dc8-b355-bcaa72b258c0" config-ref="customers-api-httpListenerConfig" path="/customers/{id}" allowedMethods="GET"/>
+		<logger level="INFO" doc:name="Logger" doc:id="2d455b0d-1931-4a5b-8858-aeb5e4051bfd" message='Getting customer record for id #[attributes.uriParams.id]'/>
+		<db:select doc:name="Get Customer Record" doc:id="88268b72-3135-47db-ad22-1eac143f02a3" config-ref="CustomerDB">
+			<db:sql >SELECT * FROM customer WHERE id= :id</db:sql>
+			<db:input-parameters ><![CDATA[#[{'id' : attributes.uriParams.id}]]]></db:input-parameters>
 		</db:select>
 		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:id="523858b9-d69a-4e00-b962-d05070060131">
             <ee:message >
